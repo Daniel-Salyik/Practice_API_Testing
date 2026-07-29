@@ -8,6 +8,28 @@
   },
   "item": [
     {
+      "name": "Ping",
+      "item": [
+        {
+          "name": "Ping - HealthCheck",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_URL}}/ping",
+              "host": [
+                "{{base_URL}}"
+              ],
+              "path": [
+                "ping"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Booking",
       "item": [
         {
@@ -81,7 +103,7 @@
                   "listen": "test",
                   "script": {
                     "exec": [
-                      "pm.test(\"Missing required field returns server error (known defect, see BUG-001)\", () => {",
+                      "pm.test(\"Missing required field returns server error\", () => {",
                       "    pm.response.to.have.status(500);",
                       "});"
                     ],
@@ -262,7 +284,7 @@
                 "exec": [
                   "pm.test('Get token for POST and DEL methods', ()=> {",
                   "\tif(pm.response.code === 200){",
-                  "\t\tpm.collectionVariables.set(\"restful_token\", pm.response.json().token)",
+                  "\t\tpm.environment.set(\"restful_token\", pm.response.json().token)",
                   "\t}",
                   "});",
                   "",
@@ -301,10 +323,6 @@
           "response": []
         }
       ]
-    },
-    {
-      "name": "Ping",
-      "item": []
     }
   ],
   "variable": [
