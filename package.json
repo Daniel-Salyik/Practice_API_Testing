@@ -17,5 +17,12 @@
   "bugs": {
     "url": "https://github.com/Daniel-Salyik/Practice_API_Testing/issues"
   },
-  "homepage": "https://github.com/Daniel-Salyik/Practice_API_Testing#readme"
+  "homepage": "https://github.com/Daniel-Salyik/Practice_API_Testing#readme",
+  "directories": {
+    "doc": "docs"
+  },
+  "devDependencies": {
+    "newman": "^6.2.2",
+    "newman-reporter-htmlextra": "^1.23.1"
+  }
 }

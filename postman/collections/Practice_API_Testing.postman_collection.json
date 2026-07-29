@@ -1,0 +1,320 @@
+{
+  "info": {
+    "_postman_id": "3659e215-0516-4411-babc-723f5d351f8c",
+    "name": "Practice_API_Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51101089",
+    "_collection_link": "https://go.postman.co/collection/51101089-3659e215-0516-4411-babc-723f5d351f8c?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Booking",
+      "item": [
+        {
+          "name": "CreateBooking",
+          "item": [
+            {
+              "name": "[CREATE_001] Valid booking creation",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const requestBody = JSON.parse(pm.request.body.raw);",
+                      "const responseBody = pm.response.json();",
+                      "",
+                      "pm.test(\"Response matches request data\", () => {",
+                      "    pm.expect(responseBody.booking.firstname).to.eql(requestBody.firstname);",
+                      "    pm.expect(responseBody.booking.lastname).to.eql(requestBody.lastname);",
+                      "    pm.expect(responseBody.booking.totalprice).to.eql(requestBody.totalprice);",
+                      "    pm.expect(responseBody.booking.bookingdates.checkin).to.eql(requestBody.bookingdates.checkin);",
+                      "    pm.expect(responseBody.booking.bookingdates.checkout).to.eql(requestBody.bookingdates.checkout);",
+                      "",
+                      "",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Sally\",\n  \"lastname\": \"Brown\",\n  \"totalprice\": 150,\n  \"depositpaid\": true,\n  \"bookingdates\": {\n    \"checkin\": \"2026-07-01\",\n    \"checkout\": \"2026-07-10\"\n  },\n  \"additionalneeds\": \"Breakfast\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_URL}}/booking",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[CREATE_002] Verify behaviour when a required field is missing",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Missing required field returns server error (known defect, see BUG-001)\", () => {",
+                      "    pm.response.to.have.status(500);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lastname\": \"Brown\",\n  \"totalprice\": 150,\n  \"depositpaid\": true,\n  \"bookingdates\": {\n    \"checkin\": \"2026-07-01\",\n    \"checkout\": \"2026-07-10\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_URL}}/booking",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[CREATE_003] Verify boundary handling when `totalprice` is `0`",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const responseData = pm.response.json();",
+                      "",
+                      "pm.test(\"[API_BOOKING_CREATE_003] totalprice = 0 is accepted as valid\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test(\"[API_BOOKING_CREATE_003] response totalprice matches sent value (0)\", () => {",
+                      "    pm.expect(responseData.booking.totalprice).to.eql(0);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Test\",\n  \"lastname\": \"Zero\",\n  \"totalprice\": 0,\n  \"depositpaid\": false,\n  \"bookingdates\": {\n    \"checkin\": \"2026-07-01\",\n    \"checkout\": \"2026-07-02\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_URL}}/booking",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[CREATE_004] Verify rejection of negative totalprice",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Negative totalprice accepted without validation\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test(\"Negative value persisted unchanged in response\", () => {",
+                      "    const responseData = pm.response.json();",
+                      "    pm.expect(responseData.booking.totalprice).to.eql(-50);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Test\",\n  \"lastname\": \"NegativePrice\",\n  \"totalprice\": -50,\n  \"depositpaid\": false,\n  \"bookingdates\": { \"checkin\": \"2026-07-01\", \"checkout\": \"2026-07-02\" }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_URL}}/booking",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[CREATE_005] Verify behavior when `checkout` date is before",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Test\",\n  \"lastname\": \"InvalidDates\",\n  \"totalprice\": 100,\n  \"depositpaid\": true,\n  \"bookingdates\": {\n    \"checkin\": \"2026-07-10\",\n    \"checkout\": \"2026-07-01\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_URL}}/booking",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "UpdateBooking",
+          "item": []
+        },
+        {
+          "name": "DeleteBooking",
+          "item": []
+        },
+        {
+          "name": "PartialUpdateBooking",
+          "item": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Auth - CreateToken",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get token for POST and DEL methods', ()=> {",
+                  "\tif(pm.response.code === 200){",
+                  "\t\tpm.collectionVariables.set(\"restful_token\", pm.response.json().token)",
+                  "\t}",
+                  "});",
+                  "",
+                  " ",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\" : \"admin\",\n    \"password\" : \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_URL}}/auth",
+              "host": [
+                "{{base_URL}}"
+              ],
+              "path": [
+                "auth"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Ping",
+      "item": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "postmanBaseUrl",
+      "value": ""
+    },
+    {
+      "key": "restful_token",
+      "value": ""
+    }
+  ]
+}
