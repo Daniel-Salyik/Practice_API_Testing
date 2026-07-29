@@ -53,15 +53,16 @@
                   "listen": "test",
                   "script": {
                     "exec": [
-                      "const requestBody = JSON.parse(pm.request.body.raw);",
-                      "const responseBody = pm.response.json();",
-                      "",
                       "pm.test(\"Response matches request data\", () => {",
-                      "    pm.expect(responseBody.booking.firstname).to.eql(requestBody.firstname);",
-                      "    pm.expect(responseBody.booking.lastname).to.eql(requestBody.lastname);",
-                      "    pm.expect(responseBody.booking.totalprice).to.eql(requestBody.totalprice);",
-                      "    pm.expect(responseBody.booking.bookingdates.checkin).to.eql(requestBody.bookingdates.checkin);",
-                      "    pm.expect(responseBody.booking.bookingdates.checkout).to.eql(requestBody.bookingdates.checkout);",
+                      "",
+                      "const requestBody = JSON.parse(pm.request.body.raw);",
+                      "const resBody = pm.response.json();",
+                      "",
+                      "    pm.expect(resBody.booking.firstname).to.eql(requestBody.firstname);",
+                      "    pm.expect(resBody.booking.lastname).to.eql(requestBody.lastname);",
+                      "    pm.expect(resBody.booking.totalprice).to.eql(requestBody.totalprice);",
+                      "    pm.expect(resBody.booking.bookingdates.checkin).to.eql(requestBody.bookingdates.checkin);",
+                      "    pm.expect(resBody.booking.bookingdates.checkout).to.eql(requestBody.bookingdates.checkout);",
                       "",
                       "",
                       "});"
@@ -325,14 +326,28 @@
       ]
     }
   ],
-  "variable": [
+  "event": [
     {
-      "key": "postmanBaseUrl",
-      "value": ""
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
     },
     {
-      "key": "restful_token",
-      "value": ""
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
     }
   ]
 }
