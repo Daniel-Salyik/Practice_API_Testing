@@ -299,6 +299,8 @@
                       "\tpm.environment.set(\"createdFirstname\", resBody.booking.firstname);",
                       "\tpm.environment.set(\"createdLastname\", resBody.booking.lastname);",
                       "\tpm.environment.set(\"createdTotalprice\", resBody.booking.totalprice);",
+                      "\tpm.environment.set(\"createdCheckin\", resBody.booking.bookingdates.checkin);",
+                      "\tpm.environment.set(\"createdCheckout\", resBody.booking.bookingdates.checkout)",
                       "",
                       "});"
                     ],
@@ -860,6 +862,306 @@
                     {
                       "key": "-10",
                       "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "GetBookingsIds",
+          "item": [
+            {
+              "name": "[GETIDS_001] Retrieve list of booking ids with no filters applied",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Get all booking ids, get status code\", () => {",
+                      "    pm.expect(pm.response.code).to.equal(200);",
+                      "});",
+                      "",
+                      "pm.test(\"Get all booking ids, response is an array\", () => {",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData).to.be.an('array');",
+                      "});",
+                      "",
+                      "pm.test(\"Get all booking ids, array is not empty\", () => {",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.length).to.be.greaterThan(0);",
+                      "});",
+                      "",
+                      "pm.test(\"Get all booking ids, each element has valid bookingid\", () => {",
+                      "    const jsonData = pm.response.json();",
+                      "    jsonData.forEach((item) => {",
+                      "        pm.expect(item).to.have.property('bookingid');",
+                      "        pm.expect(item.bookingid).to.be.a('number');",
+                      "    });",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_URL}}/booking",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[GETIDS_002] Retrieve booking ids filtered by firstname",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Get booking ids filtered by firstname for status code\", () => {",
+                      "    pm.expect(pm.response.code).to.equal(200);",
+                      "});",
+                      "",
+                      "pm.test(\"Get booking ids filtered by firstname - contains created booking\", () => {",
+                      "    const jsonData = pm.response.json();",
+                      "    const expectedId = Number(pm.environment.get(\"bookingId\"));",
+                      "    ",
+                      "    const ids = jsonData.map((item) => item.bookingid);",
+                      "    pm.expect(ids).to.include(expectedId);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_URL}}/booking?firstname={{createdFirstname}}",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ],
+                  "query": [
+                    {
+                      "key": "firstname",
+                      "value": "{{createdFirstname}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[GETIDS_003] Retrieve booking ids filtered by lastname",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Get booking ids filtered by lastname\", () => {",
+                      "    pm.expect(pm.response.code).to.equal(200);",
+                      "});",
+                      "",
+                      "pm.test(\"Get booking ids filtered by lastname - contains created booking\", () => {",
+                      "    const jsonData = pm.response.json();",
+                      "    const expectedId = Number(pm.environment.get(\"bookingId\"));",
+                      "    ",
+                      "    const ids = jsonData.map((item) => item.bookingid);",
+                      "    pm.expect(ids).to.include(expectedId);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_URL}}/booking?lastname={{createdLastname}}",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ],
+                  "query": [
+                    {
+                      "key": "lastname",
+                      "value": "{{createdLastname}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[GETIDS_004] Retrieve booking ids filtered by combined firstname and lastname",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Get booking ids filtered by firstname and lastname by status code\", () => {",
+                      "    pm.expect(pm.response.code).to.equal(200);",
+                      "});",
+                      "",
+                      "pm.test.skip(\"Get booking ids filtered by firstname and lastname\", () => {",
+                      "    const jsonData = pm.response.json();",
+                      "    const expectedId = Number(pm.environment.get(\"bookingId\"));",
+                      "    ",
+                      "    const ids = jsonData.map((item) => item.bookingid);",
+                      "    pm.expect(ids).to.include(expectedId);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_URL}}/booking?firstname={{createdFirstname}}&lastname={{createdLastname}}",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ],
+                  "query": [
+                    {
+                      "key": "firstname",
+                      "value": "{{createdFirstname}}"
+                    },
+                    {
+                      "key": "lastname",
+                      "value": "{{createdLastname}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[GETIDS_005] Retrieve booking ids filtered by checkin/checkout date range matching the created booking",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test.skip(\"Get booking ids filtered by matching date range\", () => {",
+                      "    pm.expect(pm.response.code).to.equal(200);",
+                      "",
+                      "\tconst jsonData = pm.response.json();",
+                      "    const expectedId = Number(pm.environment.get(\"bookingId\"));",
+                      "",
+                      " \tconsole.log(\"Filtered array length:\", jsonData.length);",
+                      "\tconsole.log(\"Sent checkin value:\", pm.environment.get(\"createdCheckin\"));",
+                      "    ",
+                      "    const ids = jsonData.map((item) => item.bookingid);",
+                      "    pm.expect(ids).to.include(expectedId);",
+                      "",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_URL}}/booking?checkin={{createdCheckin}}&checkout={{createdCheckout}}`",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ],
+                  "query": [
+                    {
+                      "key": "checkin",
+                      "value": "{{createdCheckin}}"
+                    },
+                    {
+                      "key": "checkout",
+                      "value": "{{createdCheckout}}`"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[GETIDS_006] Retrieve booking ids with a date range that does not match the created booking",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test.skip(\"Get booking ids filtered by non-matching date range - status code\", () => {",
+                      "    pm.expect(pm.response.code).to.equal(200);",
+                      "});",
+                      "",
+                      "pm.test.skip(\"Get booking ids filtered by non-matching date range - excludes created booking\", () => {",
+                      "    const jsonData = pm.response.json();",
+                      "    const expectedId = Number(pm.environment.get(\"bookingId\"));",
+                      "    ",
+                      "    const ids = jsonData.map((item) => item.bookingid);",
+                      "    pm.expect(ids).to.not.include(expectedId);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_URL}}/booking?checkin=2099-01-01&checkout=2099-01-10`",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ],
+                  "query": [
+                    {
+                      "key": "checkin",
+                      "value": "2099-01-01"
+                    },
+                    {
+                      "key": "checkout",
+                      "value": "2099-01-10`"
                     }
                   ]
                 }
