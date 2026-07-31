@@ -12,6 +12,21 @@
       "item": [
         {
           "name": "Ping - HealthCheck",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Check API status\", ()=> {",
+                  "\tpm.expect(pm.response.code).to.equal(201)",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -449,12 +464,207 @@
             },
             {
               "name": "[CREATE_005] Verify behavior when `checkout` date is before",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "//Known defect, see Github issue #BUG-003",
+                      "",
+                      "pm.test(\"Booking created with checkout before checkin\", ()=> {",
+                      "\tpm.expect(pm.response.code).to.equal(200)",
+                      "",
+                      "\tconst jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.booking.bookingdates.checkin).to.equal(\"2026-07-10\");",
+                      "    pm.expect(jsonData.booking.bookingdates.checkout).to.equal(\"2026-07-01\");",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
               "request": {
                 "method": "POST",
                 "header": [],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"firstname\": \"Test\",\n  \"lastname\": \"InvalidDates\",\n  \"totalprice\": 100,\n  \"depositpaid\": true,\n  \"bookingdates\": {\n    \"checkin\": \"2026-07-10\",\n    \"checkout\": \"2026-07-01\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_URL}}/booking",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[CREATE_006] Verify behavior when `bookindates` object is empty",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Empty bookingdates object triggers server error\", () => {",
+                      "",
+                      "    pm.expect(pm.response.code).to.equal(500);",
+                      "\t",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Sally\",\n  \"lastname\": \"Brown\",\n  \"totalprice\": 150,\n  \"depositpaid\": true,\n  \"bookingdates\": {},\n  \"additionalneeds\": \"Breakfast\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_URL}}/booking",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[CREATE_007] Verify behavior when `totalprice` type is string instead of number",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "//Known defect, see Github issue #BUG-006",
+                      "",
+                      "pm.test(\"String totalprice results in null value\", () => {",
+                      "    pm.expect(pm.response.code).to.equal(200);",
+                      "    ",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.booking.totalprice).to.equal(null);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Sally\",\n  \"lastname\": \"Brown\",\n  \"totalprice\": \"abc\",\n  \"depositpaid\": true,\n  \"bookingdates\": {\n    \"checkin\": \"2026-07-01\",\n    \"checkout\": \"2026-07-10\"\n  },\n  \"additionalneeds\": \"Breakfast\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_URL}}/booking",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[CREATE_008] Verify behavior when a required field (`firstname`) is an empty string",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "//Known defect, see Github issue #BUG-006",
+                      "",
+                      "pm.test(\"Empty string firstname accepted without validation\", () => {",
+                      "    pm.expect(pm.response.code).to.equal(200);",
+                      "    ",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.booking.firstname).to.equal(\"\");",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"\",\n  \"lastname\": \"Brown\",\n  \"totalprice\": \"abc\",\n  \"depositpaid\": true,\n  \"bookingdates\": {\n    \"checkin\": \"2026-07-01\",\n    \"checkout\": \"2026-07-10\"\n  },\n  \"additionalneeds\": \"Breakfast\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_URL}}/booking",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[CREATE_009] Verify behavior when a unknown field in payload",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Unknown field in payload is ignored\", () => {",
+                      "    pm.expect(pm.response.code).to.equal(200);",
+                      "    ",
+                      "    const jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.booking).to.not.have.property('unknown');",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Sally\",\n  \"lastname\": \"Brown\",\n  \"totalprice\": 150,\n  \"depositpaid\": true,\n  \"bookingdates\": {\n    \"checkin\": \"2026-07-01\",\n    \"checkout\": \"2026-07-10\"\n  },\n  \"additionalneeds\": \"Breakfast\",\n  \"unknown\" : \"bad payload\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
