@@ -30,6 +30,222 @@
       ]
     },
     {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "[AUTH_001] Create token with valid credentials",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Get token with valid credentials - status code\", () => {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Get token with valid credentials - token field exists\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('token');",
+                  "});",
+                  "",
+                  "pm.test(\"Get token with valid credentials - token is non-empty string\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.token).to.be.a('string').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.environment.set(\"auth_token\", pm.response.json().token);",
+                  "",
+                  " ",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\" : \"{{valid_username}}\",\n    \"password\" : \"{{valid_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_URL}}/auth",
+              "host": [
+                "{{base_URL}}"
+              ],
+              "path": [
+                "auth"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[AUTH_002] Request token with invalid username",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "//Defect - Assertion code should be 401 for invalid credentials",
+                  "",
+                  "pm.test(\"Request token with invalid username\", ()=> {",
+                  "",
+                  "\tpm.expect(pm.response.code).to.equal(200)",
+                  "",
+                  "\tconst jsonData = pm.response.json()",
+                  "\tpm.expect(jsonData).to.have.property('reason');",
+                  "\tpm.expect(jsonData).to.not.have.property(\"token\")",
+                  "\t",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\" : \"{{invalid_username}}\",\n    \"password\" : \"{{valid_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_URL}}/auth",
+              "host": [
+                "{{base_URL}}"
+              ],
+              "path": [
+                "auth"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[AUTH_003] Request token with invalid password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "//Defect - Assertion code should be 401 for invalid credentials",
+                  "",
+                  "pm.test(\"Request token with invalid username\", ()=> {",
+                  "",
+                  "\tpm.expect(pm.response.code).to.equal(200)",
+                  "",
+                  "\tconst jsonData = pm.response.json()",
+                  "\tpm.expect(jsonData).to.have.property('reason');",
+                  "\tpm.expect(jsonData).to.not.have.property(\"token\")",
+                  "\t",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\" : \"{{valid_username}}\",\n    \"password\" : \"{{invalid_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_URL}}/auth",
+              "host": [
+                "{{base_URL}}"
+              ],
+              "path": [
+                "auth"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[AUTH_004] Request token with empty fields",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "//Defect - Assertion code should be 401 for invalid credentials",
+                  "",
+                  "pm.test(\"Request token with empty credentials\", ()=> {",
+                  "\tpm.expect(pm.response.code).to.equal(200)",
+                  "",
+                  "",
+                  "\tconst jsonData = pm.response.json();",
+                  "\tpm.expect(jsonData).to.have.property('reason');",
+                  "\tpm.expect(jsonData).to.not.have.property(\"token\")",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\" : \"\",\n\t\"password\" : \"\"\n}"
+            },
+            "url": {
+              "raw": "{{base_URL}}/auth",
+              "host": [
+                "{{base_URL}}"
+              ],
+              "path": [
+                "auth"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Booking",
       "item": [
         {
@@ -270,58 +486,6 @@
         {
           "name": "PartialUpdateBooking",
           "item": []
-        }
-      ]
-    },
-    {
-      "name": "Auth",
-      "item": [
-        {
-          "name": "Auth - CreateToken",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Get token for POST and DEL methods', ()=> {",
-                  "\tif(pm.response.code === 200){",
-                  "\t\tpm.environment.set(\"restful_token\", pm.response.json().token)",
-                  "\t}",
-                  "});",
-                  "",
-                  " ",
-                  "",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"username\" : \"admin\",\n    \"password\" : \"password123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_URL}}/auth",
-              "host": [
-                "{{base_URL}}"
-              ],
-              "path": [
-                "auth"
-              ]
-            }
-          },
-          "response": []
         }
       ]
     }

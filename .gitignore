@@ -427,3 +427,7 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+newman/
+postman/enviroments/restful_booker.postman_environment.json
+
