@@ -1026,7 +1026,7 @@
                       "    pm.expect(pm.response.code).to.equal(200);",
                       "});",
                       "",
-                      "pm.test.skip(\"Get booking ids filtered by firstname and lastname\", () => {",
+                      "pm.test(\"Get booking ids filtered by firstname and lastname\", () => {",
                       "    const jsonData = pm.response.json();",
                       "    const expectedId = Number(pm.environment.get(\"bookingId\"));",
                       "    ",
@@ -1175,12 +1175,163 @@
           "item": []
         },
         {
-          "name": "DeleteBooking",
+          "name": "PartialUpdateBooking",
           "item": []
         },
         {
-          "name": "PartialUpdateBooking",
-          "item": []
+          "name": "DeleteBooking",
+          "item": [
+            {
+              "name": "[DEL_001] Deletion attempt with no auth token provided",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Delete booking with no auth token returns 403\", () => {",
+                      "    pm.expect(pm.response.code).to.equal(403);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_URL}}/booking/{{bookingId}}",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking",
+                    "{{bookingId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[DEL_002] Successful deletion of an existing booking with a valid token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Delete booking with valid token returns 201\", () => {",
+                      "    pm.expect(pm.response.code).to.equal(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Cookie",
+                    "value": "token={{auth_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_URL}}/booking/{{bookingId}}",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking",
+                    "{{bookingId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[DEL_003] Deletion attempt with an invalid token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Delete booking with invalid token\", () => {",
+                      "    pm.expect(pm.response.code).to.equal(403);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Cookie",
+                    "value": "token=invalid_token123",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_URL}}/booking/{{bookingId}}",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking",
+                    "{{bookingId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[DEL_004] Deletion attempt on a nonexistent booking id, with a valid token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Delete nonexistent booking id returns 405\", () => {",
+                      "    pm.expect(pm.response.code).to.equal(405);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Cookie",
+                    "value": "token={{auth_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_URL}}/booking/999999",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking",
+                    "999999"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
         }
       ]
     }
