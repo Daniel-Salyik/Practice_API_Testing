@@ -295,6 +295,10 @@
                       "    pm.expect(resBody.booking.bookingdates.checkin).to.eql(requestBody.bookingdates.checkin);",
                       "    pm.expect(resBody.booking.bookingdates.checkout).to.eql(requestBody.bookingdates.checkout);",
                       "",
+                      "\tpm.environment.set(\"bookingId\",resBody.bookingid)",
+                      "\tpm.environment.set(\"createdFirstname\", resBody.booking.firstname);",
+                      "\tpm.environment.set(\"createdLastname\", resBody.booking.lastname);",
+                      "\tpm.environment.set(\"createdTotalprice\", resBody.booking.totalprice);",
                       "",
                       "});"
                     ],
@@ -309,7 +313,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"firstname\": \"Sally\",\n  \"lastname\": \"Brown\",\n  \"totalprice\": 150,\n  \"depositpaid\": true,\n  \"bookingdates\": {\n    \"checkin\": \"2026-07-01\",\n    \"checkout\": \"2026-07-10\"\n  },\n  \"additionalneeds\": \"Breakfast\"\n}",
+                  "raw": "{\n  \"firstname\": \"William\",\n  \"lastname\": \"Shakespeare\",\n  \"totalprice\": 150,\n  \"depositpaid\": true,\n  \"bookingdates\": {\n    \"checkin\": \"2026-07-01\",\n    \"checkout\": \"2026-07-10\"\n  },\n  \"additionalneeds\": \"Breakfast\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -678,6 +682,185 @@
                   ],
                   "path": [
                     "booking"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "GetBooking",
+          "item": [
+            {
+              "name": "[GET_001] Get booking by valid id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Successful retrieval of an existing booking by valid id\", ()=> {",
+                      "\tpm.expect(pm.response.code).to.equal(200)",
+                      "",
+                      "\tconst jsonData = pm.response.json();",
+                      "",
+                      " ",
+                      "    pm.expect(jsonData.firstname).to.equal(pm.environment.get(\"createdFirstname\"));",
+                      "    pm.expect(jsonData.lastname).to.equal(pm.environment.get(\"createdLastname\"));",
+                      "    pm.expect(jsonData.totalprice).to.equal(Number(pm.environment.get(\"createdTotalprice\")));",
+                      "",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{base_URL}}/booking/{{bookingId}}",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking",
+                    "{{bookingId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[GET_002] Get booking by nonexistent id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Retrieval attempt with a nonexistent booking id\", ()=> {",
+                      "\tpm.expect(pm.response.code).to.equal(404)",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_URL}}/booking/:9999954",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking",
+                    ":9999954"
+                  ],
+                  "variable": [
+                    {
+                      "key": "9999954",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[GET_003] Get booking by non-numeric id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Retrieval attempt with a non-numeric booking id\", ()=> {",
+                      "\tpm.expect(pm.response.code).to.equal(404)",
+                      "\tpm.expect(pm.response.text()).to.equal(\"Not Found\")",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_URL}}/booking/:xyz",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking",
+                    ":xyz"
+                  ],
+                  "variable": [
+                    {
+                      "key": "xyz",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "[GET_004] Get booking by negative id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Retrieval attempt with a negative booking id\", ()=> {",
+                      "\tpm.expect(pm.response.code).to.equal(404)",
+                      "\tpm.expect(pm.response.text()).to.equal(\"Not Found\")",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Sally\",\n  \"lastname\": \"Brown\",\n  \"totalprice\": 150,\n  \"depositpaid\": true,\n  \"bookingdates\": {\n    \"checkin\": \"2026-07-01\",\n    \"checkout\": \"2026-07-10\"\n  },\n  \"additionalneeds\": \"Breakfast\",\n  \"unknown\" : \"bad payload\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_URL}}/booking/:-10",
+                  "host": [
+                    "{{base_URL}}"
+                  ],
+                  "path": [
+                    "booking",
+                    ":-10"
+                  ],
+                  "variable": [
+                    {
+                      "key": "-10",
+                      "value": ""
+                    }
                   ]
                 }
               },
