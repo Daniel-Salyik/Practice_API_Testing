@@ -321,7 +321,7 @@
                   "script": {
                     "exec": [
                       "pm.test(\"Missing required field returns server error\", () => {",
-                      "    pm.response.to.have.status(500);",
+                      "    pm.expect(pm.response.code).to.equal(500)",
                       "});"
                     ],
                     "type": "text/javascript",
@@ -364,7 +364,7 @@
                       "const responseData = pm.response.json();",
                       "",
                       "pm.test(\"[API_BOOKING_CREATE_003] totalprice = 0 is accepted as valid\", () => {",
-                      "    pm.response.to.have.status(200);",
+                      "    pm.expect(pm.response.code).to.equal(200);",
                       "});",
                       "",
                       "pm.test(\"[API_BOOKING_CREATE_003] response totalprice matches sent value (0)\", () => {",
@@ -409,12 +409,12 @@
                   "script": {
                     "exec": [
                       "pm.test(\"Negative totalprice accepted without validation\", () => {",
-                      "    pm.response.to.have.status(200);",
+                      "    pm.expect(pm.response.code).to.equal(200);",
                       "});",
                       "",
                       "pm.test(\"Negative value persisted unchanged in response\", () => {",
                       "    const responseData = pm.response.json();",
-                      "    pm.expect(responseData.booking.totalprice).to.eql(-50);",
+                      "    pm.expect(responseData.booking.totalprice).to.equal(-50);",
                       "});"
                     ],
                     "type": "text/javascript",

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-"test": "newman run postman/collections/Practice_API_Testing.postman_collection.json --environment postman/enviroments/restful_booker.postman_environment.json -r htmlextra"
-},
+    "test": "newman run postman/collections/Practice_API_Testing.postman_collection.json --environment postman/enviroments/restful_booker.postman_environment.json -r htmlextra"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Daniel-Salyik/Practice_API_Testing.git"

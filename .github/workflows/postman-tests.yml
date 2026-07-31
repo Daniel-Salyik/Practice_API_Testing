@@ -26,7 +26,7 @@ jobs:
       - name: Run Postman collection with Newman
         run: |
           newman run postman/collections/Practice_API_Testing.postman_collection.json \
-          --env-var "base_url=${{ secrets.BASE_URL }}" \
+          --env-var "base_URL=${{ secrets.BASE_URL }}" \
           --env-var "valid_username=${{ secrets.VALID_USERNAME }}" \
           --env-var "valid_password=${{ secrets.VALID_PASSWORD }}" \
           --env-var "invalid_username=wrong_username" \
